@@ -3,7 +3,7 @@ ai-chatbbot-app/node_modules/
 ai-chatbot-backend/node_modules/
 
 # Ignore environment variable files
-ai-chatbbot-app/.env
+ai-chatbot-app/.env
 ai-chatbot-backend/.env
 
 # Ignore build or output folders

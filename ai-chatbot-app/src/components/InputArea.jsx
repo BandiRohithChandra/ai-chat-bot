@@ -37,7 +37,8 @@ function InputArea() {
     setIsTyping(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/chat', {
+        const res = await axios.post('https://ai-chatbot-backend-e9ss.onrender.com/api/chat', {
+
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           ...newMessages.map((msg) => ({
