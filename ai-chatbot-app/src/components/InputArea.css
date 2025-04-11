@@ -1,0 +1,35 @@
+/* components/InputArea.css */
+.input-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    background-color: #f9f9f9;
+  }
+  
+  .chat-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    outline: none;
+  }
+  
+  .send-button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .send-button:hover {
+    background-color: #45a049;
+  }
+  
