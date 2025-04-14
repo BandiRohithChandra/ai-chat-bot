@@ -1,3 +1,4 @@
+// components/InputArea.jsx
 import React, { useState, useEffect } from 'react';
 import { useChatContext } from './ChatContext';
 import axios from 'axios';
@@ -7,6 +8,8 @@ function InputArea() {
   const [input, setInput] = useState('');
   const { messages, setMessages, setIsTyping } = useChatContext();
   const [recognition, setRecognition] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -18,15 +21,29 @@ function InputArea() {
       recog.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         setInput(transcript);
+        setIsListening(false);
       };
+      recog.onend = () => setIsListening(false);
       setRecognition(recog);
     }
   }, []);
 
   const speak = (text) => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
     speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
   };
 
   const sendMessage = async () => {
@@ -37,8 +54,7 @@ function InputArea() {
     setIsTyping(true);
 
     try {
-        const res = await axios.post('https://ai-chatbot-backend-e9ss.onrender.com/api/chat', {
-
+      const res = await axios.post('http://localhost:10000/api/chat', {
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           ...newMessages.map((msg) => ({
@@ -62,7 +78,10 @@ function InputArea() {
   };
 
   const startListening = () => {
-    if (recognition) recognition.start();
+    if (recognition && !isListening && !isSpeaking) {
+      setIsListening(true);
+      recognition.start();
+    }
   };
 
   return (
@@ -75,10 +94,22 @@ function InputArea() {
         placeholder="Type your message..."
       />
       <button className="send-button dark" onClick={sendMessage}>Send</button>
-      <button className="mic-button dark" onClick={startListening} title="Speak">🎤</button>
+      <button
+        className={`mic-button dark ${isListening ? 'listening' : ''}`}
+        onClick={startListening}
+        title="Speak"
+      >
+        🎤
+      </button>
+      <button
+        className="stop-button dark"
+        onClick={stopSpeaking}
+        title="Stop Speaking"
+      >
+        ⏹️
+      </button>
     </div>
   );
 }
-
 
 export default InputArea;
